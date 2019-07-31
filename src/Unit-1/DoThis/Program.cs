@@ -11,18 +11,21 @@ namespace WinTail
         static void Main(string[] args)
         {
             // initialize MyActorSystem
-            // YOU NEED TO FILL IN HERE
+            MyActorSystem = ActorSystem.Create("MyActorSystem");
+            Console.WriteLine("MyActorSystem has been created");
 
             PrintInstructions();
 
             // time to make your first actors!
-            //YOU NEED TO FILL IN HERE
-            // make consoleWriterActor using these props: Props.Create(() => new ConsoleWriterActor())
-            // make consoleReaderActor using these props: Props.Create(() => new ConsoleReaderActor(consoleWriterActor))
+            var consoleWriterActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()));
+            Console.WriteLine("consoleWriterActor has been instantiated.  Definition previously created");
+            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)));
+            Console.WriteLine("consoleReaderActor has been instantiated.  Definition previously created");
 
 
             // tell console reader to begin
-            //YOU NEED TO FILL IN HERE
+            Console.WriteLine("telling the readerActor to begin...........");
+            consoleReaderActor.Tell("Say something I'm giving up on you");
 
             // blocks the main thread from exiting until the actor system is shut down
             MyActorSystem.WhenTerminated.Wait();
@@ -32,12 +35,12 @@ namespace WinTail
         {
             Console.WriteLine("Write whatever you want into the console!");
             Console.Write("Some lines will appear as");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.Write(" red ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write(" magenta ");
             Console.ResetColor();
             Console.Write(" and others will appear as");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(" green! ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write(" NOT green! ");
             Console.ResetColor();
             Console.WriteLine();
             Console.WriteLine();

@@ -20,6 +20,7 @@ namespace WinTail
         protected override void OnReceive(object message)
         {
             var read = Console.ReadLine();
+            //Console.WriteLine($"this is what I read: {message}");
             if (!string.IsNullOrEmpty(read) && String.Equals(read, ExitCommand, StringComparison.OrdinalIgnoreCase))
             {
                 // shut down the system (acquire handle to system via
@@ -28,11 +29,12 @@ namespace WinTail
                 return;
             }
 
+
             // send input to the console writer to process and print
-            // YOU NEED TO FILL IN HERE
+            _consoleWriterActor.Tell(read);
 
             // continue reading messages from the console
-            // YOU NEED TO FILL IN HERE
+            Self.Tell("continue");
         }
 
     }
