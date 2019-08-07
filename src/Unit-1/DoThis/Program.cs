@@ -12,23 +12,32 @@ namespace WinTail
         {
             // initialize MyActorSystem
             MyActorSystem = ActorSystem.Create("MyActorSystem");
-            Console.WriteLine("\n\n MyActorSystem has been created\n\n");
-
+            Console.WriteLine("\n MyActorSystem has been created\n");
+                        
             //PrintInstructions();
 
             // time to make your first actors!
-            var consoleWriterActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()));
-            Console.WriteLine("consoleWriterActor has been instantiated.  Definition previously created");
-            var consoleReaderActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)));
-            Console.WriteLine("consoleReaderActor has been instantiated.  Definition previously created");
+            //var consoleWriterActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleWriterActor()));
+            //Console.WriteLine("\n consoleWriterActor has been instantiated.  Definition previously created\n");
+            //var consoleReaderActor = MyActorSystem.ActorOf(Props.Create(() => new ConsoleReaderActor(consoleWriterActor)));
+            //Console.WriteLine("\n consoleReaderActor has been instantiated.  Definition previously created\n");
+            
+            Props consoleWriterProps = Props.Create<ConsoleWriterActor>();
+            IActorRef consoleWriterActor = MyActorSystem.ActorOf(consoleWriterProps, "consoleWriterActor");
 
+            Props validationActorProps = Props.Create(() => new ValidationActor(consoleWriterActor));
+            IActorRef validationActor = MyActorSystem.ActorOf(validationActorProps, "validationActor");
+
+            Props consoleReaderProps = Props.Create<ConsoleReaderActor>(validationActor);
+            IActorRef consoleReaderActor = MyActorSystem.ActorOf(consoleReaderProps, "consoleReaderActor");
 
             // tell console reader to begin
-            Console.WriteLine("telling the readerActor to begin...........");
+            Console.WriteLine("\n telling the readerActor to begin...........\n");
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);
 
             // blocks the main thread from exiting until the actor system is shut down
             MyActorSystem.WhenTerminated.Wait();
+
         }
 
         //private static void PrintInstructions()
